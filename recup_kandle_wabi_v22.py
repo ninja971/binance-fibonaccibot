@@ -7342,7 +7342,7 @@ def EXEC_ORDER (dataframe):
                 # custom_info["LAST_ORDER"]=LAST_ORDER
                 
                 CALL_TELEGRAMME()
-                LAST_ORDER=ORDER
+                LAST_ORDER="BUY"
                 custom_info["LAST_ORDER"]=LAST_ORDER
                 print("DANS EXEC ORDER VENTE LAST_ORDER=",LAST_ORDER) 
                 ORDER="" 
