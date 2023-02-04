@@ -763,331 +763,335 @@ def HEIKIN_ASHI_indicators(rel_df) :
 
 
 def populate_indicators(btc_df) :
-    try:
+    # try:
         global dataframe_date
         #TIMEDELTA=2
         #TIMEDELTA=1
         #global dataframe
         dataframe=btc_df[['date','open','high','low','close','volume']].copy()
         global MULTIP   
-        OPEN=btc_df['open'].iloc[-1]
-        DEC_OPEN=OPEN.split(".")[1]    
-        MULTIP=10 ** len(DEC_OPEN)
+        # OPEN=btc_df['close'].iloc[-1]
+        # DEC_OPEN=OPEN.split(".")[1]    
+        # MULTIP=10 ** len(DEC_OPEN)
+        MULTIP=1000000000
         print("MULTIP :",MULTIP)
-    except Exception as g:
-        pass
-    
-    dataframe_date=dataframe
-    dataframe=HEIKIN_ASHI_indicators(dataframe)
-    dataframe=SAR_indicators(dataframe)
-    SAR=dataframe['SAR']
-    #dataframe=btc_df[['date','open','high','low','close']]
-    #Calcule d'un moyenne entre la DEMA40 et la EMA15
-    # EMA200=dataframe['close'].ewm(span = 200, adjust = False).mean()
-    EMA200=dataframe['close'].ewm(span = 130, adjust = False).mean()
-    #dataframe['EMA200'].append(EMA200,ignore_index=True)
-    #print("EMA200\n: ",EMA200)
-    dataframe['EMA200'] = EMA200
-    EMA1H = dataframe['high'].ewm(span = 1, adjust = False).mean()
-    #print("EMA1H:\n",EMA1H)
-    dataframe['EMA1H'] = EMA1H
-    EMA1L = dataframe['low'].ewm(span = 1, adjust = False).mean()
-    #print("EMA1H:\n",EMA1H)
-    dataframe['EMA1L'] = EMA1L
-    # EMA15 = dataframe['close'].ewm(span = 15, adjust = False).mean()
-    # EMA15 = dataframe['close'].ewm(span = 11, adjust = False).mean()
-    EMA15 = dataframe['low'].ewm(span = 7, adjust = False).mean()
-    dataframe['EMA15'] = EMA15
-    dataframe['EMA15'] = EMA15
-    # EMA40 = dataframe['close'].ewm(span = 40, adjust = False).mean()
-    # DEMA40 = 2*EMA40 - EMA40.ewm(span = 40, adjust = False).mean()
-    # dataframe['DEMA40'] = DEMA40
-    global DEMA2V
-    EMA2V = dataframe['volume'].ewm(span = 2, adjust = False).mean()
-    DEMA2V = 2*EMA2V - EMA2V.ewm(span = 2, adjust = False).mean()
-    dataframe['DEMA2V'] = DEMA2V
-    print("\nDATAFRAME:\n",dataframe.tail())
-    print("\nDATAFRAME_DATE:\n",dataframe_date.tail())
-    print("\nDEMA2V:\n",DEMA2V.tail())
-    #CALCULE_SOMME_VOLUMES(dataframe)
-    # CALCULE_DF_VOLUME_VWAP(dataframe)
-    # dynamic_indicators(dataframe)
-    # exit()
-    
-    ####################### #CALCULE MIN #####################
-    
-    #max=df1[['DEMA40']].max(skipna=True)
-    max_EMA200=dataframe[['EMA200']].max(skipna=True)
-    min_EMA200=dataframe[['EMA200']].min(skipna=True)
-    print("min_EMA200: ",min_EMA200)
-    print("max_EMA200: ",max_EMA200)
-    
-    positions = np.flatnonzero(min_EMA200)
-    #print("positions:",positions)
-    print("LEN positions  min_EMA200:",len(positions))
-    if len(positions) == 0 :
-        min_EMA200=0
-    positions = np.flatnonzero(max_EMA200)
-    print("positions max_EMA200:",positions)
-    print("LEN positions:",len(positions))
-    if len(positions) == 0 :
-        max_EMA200=0
-        
-    max_EMA15=dataframe[['EMA15']].max(skipna=True)
-    min_EMA15=dataframe[['EMA15']].min(skipna=True)
-    print("min_EMA15: ",min_EMA15)
-    print("max_EMA15: ",max_EMA15)
-    
-    positions = np.flatnonzero(min_EMA15)
-    #print("positions:",positions)
-    print("LEN positions min_EMA15:",len(positions))
-    if len(positions) == 0 :
-        min_EMA15=0
-    positions = np.flatnonzero(max_EMA15)
-    #print("positions:",positions)
-    print("LEN positions max_EMA15:",len(positions))
-    if len(positions) == 0 :
-        max_EMA15=0
-        
-    # MIN_INDEX_VALEUR_EMA200=dataframe.loc[dataframe['EMA200'] == min_EMA200.EMA200].index.values.astype(int)[0]
-    # print ("MIN_INDEX_VALEUR_EMA200.EMA200 :",MIN_INDEX_VALEUR_EMA200)
-    # print ("VAL min_EMA200.EMA200 :\n",dataframe.iloc[MIN_INDEX_VALEUR_EMA200])
-    
-    # MAX_INDEX_VALEUR_EMA200=dataframe.loc[dataframe['EMA200'] == max_EMA200.EMA200].index.values.astype(int)[0]
-    # print ("\nMAX_INDEX_VALEUR_EMA200 :",MAX_INDEX_VALEUR_EMA200)
-    # print ("VAL max_EMA200.EMA200 :\n",dataframe.iloc[MAX_INDEX_VALEUR_EMA200])
-
-    # global MULTIP
-    # #MULTIP=100000000
-    # STR_OPEN=str(dataframe.iloc[-1].open)
-    # LEN_OPEN=len(STR_OPEN.split(".")[0])
-    # print("STR_OPEN:",STR_OPEN)
-    # print("LEN_OPEN:",LEN_OPEN)
-    # if LEN_OPEN  > 1 :
-    #     MULTIP=1
-    # print("MULTIP:",MULTIP)
-    # MULTI=TEST_MULTI_PAIR(dataframe)
-    ####################### #CALCULE CROISEMENT #####################
-    dataframe['EMA1H_ORG']= EMA1H
-    dataframe['EMA200']= dataframe['EMA200'].apply(lambda x : (np.round(x,decimals = 8))).astype(float)
-    #dataframe['EMA200']= dataframe['EMA200'].apply(lambda x : (round(x,8))).astype(int)
-    dataframe['EMA200_ORG']= EMA200
-    OPEN = dataframe['open'].ewm(span = 1, adjust = True).mean()
-    print("OPEN:\n",OPEN.tail())
-    dataframe['OPEN'] = OPEN
-    CLOSE = dataframe['close'].ewm(span = 1, adjust = True).mean()
-    print("CLOSE:\n",CLOSE.tail())
-    dataframe['CLOSE'] = CLOSE
-    
-
-
-
-    
-    LOW = dataframe['low'].ewm(span = 1, adjust = True).mean()
-    print("LOW:\n",LOW.tail())
-    dataframe['LOW'] = LOW
-    
-    HIGH = dataframe['high'].ewm(span = 1, adjust = True).mean()
-    print("HIGH:\n",HIGH.tail())
-    dataframe['HIGH'] = HIGH
-    dataframe['PSAR']= SAR
-    dataframe['EMA1H']= EMA1H
-    dataframe['EMA1L']= EMA1L
-    dataframe['EMA200']= EMA200
-    dataframe['EMA15']= EMA15
-    LAST_CLOSE=CLOSE.iloc[-1].astype(int)
-    print("LAST_CLOSE:\n",LAST_CLOSE)
-    
-    # if int(LAST_CLOSE) <= 0 :
-    #     dataframe['OPEN']= OPEN.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['CLOSE']= CLOSE.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['LOW']= LOW.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['HIGH']= HIGH.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['PSAR']= SAR.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['EMA1H']= EMA1H.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['EMA1L']= EMA1L.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['EMA200']= EMA200.apply(lambda x : (x*MULTIP)).astype(float)
-    #     dataframe['EMA15']= EMA15.apply(lambda x : (x*MULTIP)).astype(float)
-    
-    
-    # dataframe['DEMA40']= DEMA40.apply(lambda x : (x*MULTIP)).astype(int)
-    # dataframe['VWAP']= DEMA40.apply(lambda x : (x*MULTIP)).astype(int)
-    #print("dataframe :\n",dataframe.tail())
-    # dataframe['DIFF_EMA1L_EMA15']= dataframe.apply(lambda x : x['EMA1L'] - x['EMA15'],axis = 1).astype(int)
-    ##print("dataframe DIFF_EMA1L_EMA15:\n",dataframe['DIFF_EMA1L_EMA15'])
-    dataframe['DIFF_EMA1H_EMA15']= dataframe.apply(lambda x : x['EMA1H'] - x['EMA15'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA1H_EMA15:\n",dataframe['DIFF_EMA1H_EMA15'])
-    ###dataframe['DIFF_DEMA40_EMA15']= dataframe.apply(lambda x : x['DEMA40'] - x['EMA15'],axis = 1).astype(float)
-    ##print("dataframe DIFF_DEMA40_EMA15:\n",dataframe['DIFF_DEMA40_EMA15'])
-    dataframe['DIFF_EMA200_EMA15']= dataframe.apply(lambda x : x['EMA200'] - x['EMA15'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA15'])
-    dataframe['DIFF_EMA200_EMA1L']= dataframe.apply(lambda x : x['EMA200'] - x['EMA1L'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA1L'])
-    dataframe['DIFF_EMA200_EMA1H']= dataframe.apply(lambda x : x['EMA200'] - x['EMA1H'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA1H'])    
-    dataframe['DIFF_EMA200_CLOSE']= dataframe.apply(lambda x : x['EMA200'] - x['CLOSE'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA200_CLOSE:\n",dataframe['DIFF_EMA200_CLOSE'].tail())   
-    dataframe['DIFF_EMA1H_EMA1L']= dataframe.apply(lambda x : x['EMA1H'] - x['EMA1L'],axis = 1).astype(float)
-    ##print("dataframe DIFF_EMA1H_EMA1L:\n",dataframe['DIFF_EMA1H_EMA1L'])    
-    ##print("dataframe DIFF_DEMA40_EMA15:\n",dataframe['DIFF_DEMA40_EMA15'])
-    #dataframe['DIFF_EMA200_EMA15_MOINS_1']=dataframe.DIFF_EMA200_EMA15.shift(periods=-1).dropna().astype(int)
-    #dataframe['DIFF_EMA200_EMA1L_MOINS_1']=dataframe.DIFF_EMA200_EMA1L.shift(periods=-1).dropna().astype(int)
-    #dataframe['DIFF_EMA200_EMA1H_MOINS_1']=dataframe.DIFF_EMA200_EMA1H.shift(periods=-1).dropna().astype(int)
-    dataframe['DIFF_EMA15_CLOSE']= dataframe.apply(lambda x : x['EMA15'] - x['CLOSE'],axis = 1).astype(float)
-    dataframe['DIFF_EMA1L_SAR']= dataframe.apply(lambda x : x['low'] - x['SAR'],axis = 1).astype(float)
-    print("dataframe['DIFF_EMA1L_SAR'] :\n",dataframe['DIFF_EMA1L_SAR'].tail())
-    dataframe['DIFF_EMA1H_SAR']= dataframe.apply(lambda x : x['high'] - x['SAR'],axis = 1).astype(float)
-    print("dataframe['DIFF_EMA1H_SAR'] :\n",dataframe['DIFF_EMA1H_SAR'].tail())
-
-
-    #Calcule d'un moyenne entre la DEMA40 et la EMA15
-    # MA_DEMA40_EMA15=(DEMA40+dataframe['EMA15'])/2
-    #df=dataframe.copy()
-    df=dataframe
-    # LAST_DEMA40=df.iloc[-1].DEMA40
-    LAST_EMA15=df.iloc[-1].EMA15
-    pd.set_option('display.max_rows', None)
-    #print("dataframe :\n",dataframe.head(150))
-    print("dataframe :\n",dataframe.tail())
-    # exit()
-    
-    ###print("\nidx_DEMA40 :\n",idx_DEMA40)
-    ###print("\ndataframe ILOC idx_DEMA40 > EMA15 :\n",dataframe.iloc[idx_DEMA40].tail())
-    print("\ndataframe INDEX  min_EMA200 :\n",min_EMA200.index)
-    print("\nDATE_DEB={} , DATE_FIN={}".format(DATE_DEB,DATE_FIN))
-    print("\nDATE_DEB={} , DATE_FIN={}".format(0,dataframe_date.date.tail(1)))
-    print("\nDATE_DEB={} , DATE_FIN={}".format(0,dataframe_date.index[-1]))
-    #last_index=dataframe.index[-1]
-    LAST_INDEX=len(dataframe)-1
-    index_courant=0
-    val_idx_min=dataframe['EMA200'].idxmin()
-    val_idx_max=dataframe['EMA200'].idxmax()
-    print("\ndataframe idxmin_EMA200 : ",val_idx_min)
-    print("dataframe idxmax_EMA200 : ",val_idx_max)
-    # print("\ndataframe ILOC Min_EMA200 :\n",dataframe[['date','EMA200']].loc[val_idx_min])
-    # print("\ndataframe ILOC Max_EMA200 :\n",dataframe[['date','EMA200']].loc[val_idx_max])
-    print("\ndataframe ILOC Min_EMA200 :\n",dataframe[['EMA200']].loc[val_idx_min])
-    print("\ndataframe ILOC Max_EMA200 :\n",dataframe[['EMA200']].loc[val_idx_max])
-    print("\ndataframe ILOC Min_EMA200 :",dataframe[['EMA200']].loc[val_idx_min].values.astype(float)[0])
-    print("\ndataframe ILOC Max_EMA200 :",dataframe[['EMA200']].loc[val_idx_max].values.astype(float)[0])
-
-    LISTE_INDEX=dataframe.tail(1).index.values.astype(int)[0]
-    print("LISTE_INDEX=",LISTE_INDEX)
-    print("LAST_INDEX=",dataframe_date.iloc[-1].date)
-
-    if val_idx_min > 0 :
-        NBR=1
-    else:
-        NBR=0
-        
-   # # global DIFF_EMA200_EMA15_MOINS_1
-   # # DIFF_EMA200_EMA15_MOINS_1=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min-NBR]
-   #  global OPEN_MOINS_1
-   #  OPEN_MOINS_1=dataframe['OPEN'].loc[val_idx_min-NBR]
-   #  global CLOSE_MOINS_1
-   #  CLOSE_MOINS_1=dataframe['CLOSE'].loc[val_idx_min-NBR]
    
-   #  global DIFF_EMA200_EMA1L_MOINS_1
-   #  DIFF_EMA200_EMA1L_MOINS_1=dataframe.DIFF_EMA200_EMA1L.loc[val_idx_min-NBR]
-   #  global DIFF_EMA200_EMA1H_MOINS_1
-   #  DIFF_EMA200_EMA1H_MOINS_1=dataframe.DIFF_EMA200_EMA1H.loc[val_idx_min-NBR]
-    
-   #  global DIFF_EMA200_EMA15
-   #  DIFF_EMA200_EMA15=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min]
-   #  global DIFF_EMA200_EMA15_MOINS_1
-   #  DIFF_EMA200_EMA15_MOINS_1=DIFF_EMA200_EMA15
-    
-   #  if val_idx_min > 0 :
-   #      DIFF_EMA200_EMA15_MOINS_1=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min-1]
-    
-   #  global DIFF_EMA200_EMA1L
-   #  DIFF_EMA200_EMA1L=dataframe.DIFF_EMA200_EMA1L.loc[val_idx_min]
-   #  global DIFF_EMA200_EMA1H
-   #  DIFF_EMA200_EMA1H=dataframe.DIFF_EMA200_EMA1H.loc[val_idx_min] 
-    
-   #  global TRAME_EMA200_EMA15_MOINS_1
-   #  TRAME_EMA200_EMA15_MOINS_1=dataframe.loc[val_idx_min-NBR]
-   #  global TRAME_EMA200_EMA15
-   #  TRAME_EMA200_EMA15=dataframe.loc[val_idx_min]
-    
-    #DERTERMINATION DU POINT D ACHAT
-    global VARIATION_EMA200_EMA15
-    # VARIATION_EMA200_EMA15=DIFF_EMA200_EMA15-DIFF_EMA200_EMA15_MOINS_1
-
-    global CUMUL_TAILLE_BG_ROUGE
-    global CUMUL_TAILLE_BG_VERTE
-    global custom_info
-    # print("TRAME_EMA200_EMA15_MOINS_1:",TRAME_EMA200_EMA15_MOINS_1)
-    # print("DIFF_EMA200_EMA15_MOINS_1:",DIFF_EMA200_EMA15_MOINS_1)
-    # print("TRAME_EMA200_EMA15:",TRAME_EMA200_EMA15)
-    # print("DIFF_EMA200_EMA15:",DIFF_EMA200_EMA15)
-    # print("\nVARIATION_EMA200_EMA15  :",VARIATION_EMA200_EMA15)
-    print("dataframe:;\n",dataframe.tail())
-
-    #print("\ndataframe DESS CROSS LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15 ILOC idx_EMA200_EMA15  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15)
-    # print("\ndataframe DESS CROSS  LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15_N2 ILOC idx_EMA200_EMA15  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15_N2)
-    # print("\ndataframe DESS CROSS DERNIERE VALEUR DE EMA15 POUR LE CROISEMENT ENTRE EMA1H ET EMA200  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA1H)
-    
-    # SPEED=CALCULE_GRADIENT(dataframe,"EMA15")
-    # positions = np.flatnonzero(SPEED)
-    # print("positions:",positions)
-    # print("LEN positions:",len(positions))
-    # global SPEED_EMA15
-    # if len(positions) == 0 :
-    #     SPEED_EMA15=0
-    # else:
-    #     dataframe['SPEED_EMA15'] = SPEED
-    #     dataframe = dataframe.dropna()
-    #     dataframe['SPEED_EMA15']= dataframe['SPEED_EMA15'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
-    #     SPEED_EMA15=dataframe[['SPEED_EMA15']].loc[val_idx_min].values.astype(int)
-
-    
-    # SPEED=CALCULE_GRADIENT(dataframe,"EMA1L")
-    # positions = np.flatnonzero(SPEED)
-    # print("positions:",positions)
-    # print("LEN positions:",len(positions))
-    # global SPEED_EMA1L
-    # if len(positions) == 0 :
-    #     SPEED_EMA1L=0
-    # else:
-    #     dataframe['SPEED_EMA1L'] = SPEED
-    #     dataframe = dataframe.dropna()
-    #     dataframe['SPEED_EMA1L']= dataframe['SPEED_EMA1L'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
-    #     SPEED_EMA1L=dataframe[['SPEED_EMA1L']].loc[val_idx_min].values.astype(int)
+        dataframe_date=dataframe
+        dataframe=HEIKIN_ASHI_indicators(dataframe)
+        dataframe=SAR_indicators(dataframe)
+        SAR=dataframe['SAR']
+        #dataframe=btc_df[['date','open','high','low','close']]
+        #Calcule d'un moyenne entre la DEMA40 et la EMA15
+        # EMA200=dataframe['close'].ewm(span = 200, adjust = False).mean()
+        EMA200=dataframe['close'].ewm(span = 130, adjust = False).mean()
+        #dataframe['EMA200'].append(EMA200,ignore_index=True)
+        #print("EMA200\n: ",EMA200)
+        dataframe['EMA200'] = EMA200
+        EMA1H = dataframe['high'].ewm(span = 1, adjust = False).mean()
+        #print("EMA1H:\n",EMA1H)
+        dataframe['EMA1H'] = EMA1H
+        EMA1L = dataframe['low'].ewm(span = 1, adjust = False).mean()
+        #print("EMA1H:\n",EMA1H)
+        dataframe['EMA1L'] = EMA1L
+        # EMA15 = dataframe['close'].ewm(span = 15, adjust = False).mean()
+        # EMA15 = dataframe['close'].ewm(span = 11, adjust = False).mean()
+        EMA15 = dataframe['low'].ewm(span = 7, adjust = False).mean()
+        dataframe['EMA15'] = EMA15
+        dataframe['EMA15'] = EMA15
+        # EMA40 = dataframe['close'].ewm(span = 40, adjust = False).mean()
+        # DEMA40 = 2*EMA40 - EMA40.ewm(span = 40, adjust = False).mean()
+        # dataframe['DEMA40'] = DEMA40
+        global DEMA2V
+        EMA2V = dataframe['volume'].ewm(span = 2, adjust = False).mean()
+        DEMA2V = 2*EMA2V - EMA2V.ewm(span = 2, adjust = False).mean()
+        dataframe['DEMA2V'] = DEMA2V
+        print("\nDATAFRAME:\n",dataframe.tail())
+        print("\nDATAFRAME_DATE:\n",dataframe_date.tail())
+        print("\nDEMA2V:\n",DEMA2V.tail())
+        #CALCULE_SOMME_VOLUMES(dataframe)
+        # CALCULE_DF_VOLUME_VWAP(dataframe)
+        # dynamic_indicators(dataframe)
+        # exit()
         
-    # SPEED=CALCULE_GRADIENT(dataframe,"EMA1H")
-    # dataframe['SPEED_EMA1H'] = SPEED
-    # positions = np.flatnonzero(SPEED)
-    # print("positions:",positions)
-    # print("LEN positions:",len(positions))
-    # global SPEED_EMA1H
-    # if len(positions) == 0 :
-    #     SPEED_EMA1H=0
-    # else:
-    #     dataframe = dataframe.dropna()
-    #     dataframe['SPEED_EMA1H']= dataframe['SPEED_EMA1H'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
-    #     SPEED_EMA1H=dataframe[['SPEED_EMA1H']].loc[val_idx_min].values.astype(int)
+        ####################### #CALCULE MIN #####################
+        
+        #max=df1[['DEMA40']].max(skipna=True)
+        max_EMA200=dataframe[['EMA200']].max(skipna=True)
+        min_EMA200=dataframe[['EMA200']].min(skipna=True)
+        print("min_EMA200: ",min_EMA200)
+        print("max_EMA200: ",max_EMA200)
+        
+        positions = np.flatnonzero(min_EMA200)
+        #print("positions:",positions)
+        print("LEN positions  min_EMA200:",len(positions))
+        if len(positions) == 0 :
+            min_EMA200=0
+        positions = np.flatnonzero(max_EMA200)
+        print("positions max_EMA200:",positions)
+        print("LEN positions:",len(positions))
+        if len(positions) == 0 :
+            max_EMA200=0
+            
+        max_EMA15=dataframe[['EMA15']].max(skipna=True)
+        min_EMA15=dataframe[['EMA15']].min(skipna=True)
+        print("min_EMA15: ",min_EMA15)
+        print("max_EMA15: ",max_EMA15)
+        
+        positions = np.flatnonzero(min_EMA15)
+        #print("positions:",positions)
+        print("LEN positions min_EMA15:",len(positions))
+        if len(positions) == 0 :
+            min_EMA15=0
+        positions = np.flatnonzero(max_EMA15)
+        #print("positions:",positions)
+        print("LEN positions max_EMA15:",len(positions))
+        if len(positions) == 0 :
+            max_EMA15=0
+            
+        # MIN_INDEX_VALEUR_EMA200=dataframe.loc[dataframe['EMA200'] == min_EMA200.EMA200].index.values.astype(int)[0]
+        # print ("MIN_INDEX_VALEUR_EMA200.EMA200 :",MIN_INDEX_VALEUR_EMA200)
+        # print ("VAL min_EMA200.EMA200 :\n",dataframe.iloc[MIN_INDEX_VALEUR_EMA200])
+        
+        # MAX_INDEX_VALEUR_EMA200=dataframe.loc[dataframe['EMA200'] == max_EMA200.EMA200].index.values.astype(int)[0]
+        # print ("\nMAX_INDEX_VALEUR_EMA200 :",MAX_INDEX_VALEUR_EMA200)
+        # print ("VAL max_EMA200.EMA200 :\n",dataframe.iloc[MAX_INDEX_VALEUR_EMA200])
     
-    # SPEED=CALCULE_GRADIENT(dataframe,"EMA200")
-    # dataframe['SPEED_EMA200'] = SPEED
-    # positions = np.flatnonzero(SPEED)
-    # print("positions:",positions)
-    # print("LEN positions:",len(positions))
-    # global SPEED_EMA200
-    # if len(positions) == 0 :
-    #     SPEED_EMA200=0
-    # else:
-    #     dataframe = dataframe.dropna()
-    #     dataframe['SPEED_EMA200']= dataframe['SPEED_EMA200'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
-    #     SPEED_EMA200=dataframe[['SPEED_EMA200']].loc[val_idx_min].values.astype(int)
+        # global MULTIP
+        # #MULTIP=100000000
+        # STR_OPEN=str(dataframe.iloc[-1].open)
+        # LEN_OPEN=len(STR_OPEN.split(".")[0])
+        # print("STR_OPEN:",STR_OPEN)
+        # print("LEN_OPEN:",LEN_OPEN)
+        # if LEN_OPEN  > 1 :
+        #     MULTIP=1
+        # print("MULTIP:",MULTIP)
+        # MULTI=TEST_MULTI_PAIR(dataframe)
+        ####################### #CALCULE CROISEMENT #####################
+        dataframe['EMA1H_ORG']= EMA1H
+        dataframe['EMA200']= dataframe['EMA200'].apply(lambda x : (np.round(x,decimals = 8))).astype(float)
+        #dataframe['EMA200']= dataframe['EMA200'].apply(lambda x : (round(x,8))).astype(int)
+        dataframe['EMA200_ORG']= EMA200
+        OPEN = dataframe['open'].ewm(span = 1, adjust = True).mean()
+        print("OPEN:\n",OPEN.tail())
+        dataframe['OPEN'] = OPEN
+        CLOSE = dataframe['close'].ewm(span = 1, adjust = True).mean()
+        print("CLOSE:\n",CLOSE.tail())
+        dataframe['CLOSE'] = CLOSE
+        
     
-    global DIFF_EMA200_CLOSE
-    DIFF_EMA200_CLOSE=dataframe[['DIFF_EMA200_CLOSE']].loc[val_idx_min].values.astype(int)
     
-    print("dataframe :\n",dataframe.tail())
-    print("SORTIE populate_indicators")
-    #exit()
-    return dataframe
+    
+        
+        LOW = dataframe['low'].ewm(span = 1, adjust = True).mean()
+        print("LOW:\n",LOW.tail())
+        dataframe['LOW'] = LOW
+        
+        HIGH = dataframe['high'].ewm(span = 1, adjust = True).mean()
+        print("HIGH:\n",HIGH.tail())
+        dataframe['HIGH'] = HIGH
+        dataframe['PSAR']= SAR
+        dataframe['EMA1H']= EMA1H
+        dataframe['EMA1L']= EMA1L
+        dataframe['EMA200']= EMA200
+        dataframe['EMA15']= EMA15
+        LAST_CLOSE=CLOSE.iloc[-1].astype(int)
+        print("LAST_CLOSE:\n",LAST_CLOSE)
+        
+        # if int(LAST_CLOSE) <= 0 :
+        #     dataframe['OPEN']= OPEN.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['CLOSE']= CLOSE.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['LOW']= LOW.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['HIGH']= HIGH.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['PSAR']= SAR.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['EMA1H']= EMA1H.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['EMA1L']= EMA1L.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['EMA200']= EMA200.apply(lambda x : (x*MULTIP)).astype(float)
+        #     dataframe['EMA15']= EMA15.apply(lambda x : (x*MULTIP)).astype(float)
+        
+        
+        # dataframe['DEMA40']= DEMA40.apply(lambda x : (x*MULTIP)).astype(int)
+        # dataframe['VWAP']= DEMA40.apply(lambda x : (x*MULTIP)).astype(int)
+        #print("dataframe :\n",dataframe.tail())
+        # dataframe['DIFF_EMA1L_EMA15']= dataframe.apply(lambda x : x['EMA1L'] - x['EMA15'],axis = 1).astype(int)
+        ##print("dataframe DIFF_EMA1L_EMA15:\n",dataframe['DIFF_EMA1L_EMA15'])
+        dataframe['DIFF_EMA1H_EMA15']= dataframe.apply(lambda x : x['EMA1H'] - x['EMA15'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA1H_EMA15:\n",dataframe['DIFF_EMA1H_EMA15'])
+        ###dataframe['DIFF_DEMA40_EMA15']= dataframe.apply(lambda x : x['DEMA40'] - x['EMA15'],axis = 1).astype(float)
+        ##print("dataframe DIFF_DEMA40_EMA15:\n",dataframe['DIFF_DEMA40_EMA15'])
+        dataframe['DIFF_EMA200_EMA15']= dataframe.apply(lambda x : x['EMA200'] - x['EMA15'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA15'])
+        dataframe['DIFF_EMA200_EMA1L']= dataframe.apply(lambda x : x['EMA200'] - x['EMA1L'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA1L'])
+        dataframe['DIFF_EMA200_EMA1H']= dataframe.apply(lambda x : x['EMA200'] - x['EMA1H'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA200_EMA15:\n",dataframe['DIFF_EMA200_EMA1H'])    
+        dataframe['DIFF_EMA200_CLOSE']= dataframe.apply(lambda x : x['EMA200'] - x['CLOSE'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA200_CLOSE:\n",dataframe['DIFF_EMA200_CLOSE'].tail())   
+        dataframe['DIFF_EMA1H_EMA1L']= dataframe.apply(lambda x : x['EMA1H'] - x['EMA1L'],axis = 1).astype(float)
+        ##print("dataframe DIFF_EMA1H_EMA1L:\n",dataframe['DIFF_EMA1H_EMA1L'])    
+        ##print("dataframe DIFF_DEMA40_EMA15:\n",dataframe['DIFF_DEMA40_EMA15'])
+        #dataframe['DIFF_EMA200_EMA15_MOINS_1']=dataframe.DIFF_EMA200_EMA15.shift(periods=-1).dropna().astype(int)
+        #dataframe['DIFF_EMA200_EMA1L_MOINS_1']=dataframe.DIFF_EMA200_EMA1L.shift(periods=-1).dropna().astype(int)
+        #dataframe['DIFF_EMA200_EMA1H_MOINS_1']=dataframe.DIFF_EMA200_EMA1H.shift(periods=-1).dropna().astype(int)
+        dataframe['DIFF_EMA15_CLOSE']= dataframe.apply(lambda x : x['EMA15'] - x['CLOSE'],axis = 1).astype(float)
+        dataframe['DIFF_EMA1L_SAR']= dataframe.apply(lambda x : x['low'] - x['SAR'],axis = 1).astype(float)
+        print("dataframe['DIFF_EMA1L_SAR'] :\n",dataframe['DIFF_EMA1L_SAR'].tail())
+        dataframe['DIFF_EMA1H_SAR']= dataframe.apply(lambda x : x['high'] - x['SAR'],axis = 1).astype(float)
+        print("dataframe['DIFF_EMA1H_SAR'] :\n",dataframe['DIFF_EMA1H_SAR'].tail())
+    
+    
+        #Calcule d'un moyenne entre la DEMA40 et la EMA15
+        # MA_DEMA40_EMA15=(DEMA40+dataframe['EMA15'])/2
+        #df=dataframe.copy()
+        df=dataframe
+        # LAST_DEMA40=df.iloc[-1].DEMA40
+        LAST_EMA15=df.iloc[-1].EMA15
+        pd.set_option('display.max_rows', None)
+        #print("dataframe :\n",dataframe.head(150))
+        print("dataframe :\n",dataframe.tail())
+        # exit()
+        
+        ###print("\nidx_DEMA40 :\n",idx_DEMA40)
+        ###print("\ndataframe ILOC idx_DEMA40 > EMA15 :\n",dataframe.iloc[idx_DEMA40].tail())
+        print("\ndataframe INDEX  min_EMA200 :\n",min_EMA200.index)
+        print("\nDATE_DEB={} , DATE_FIN={}".format(DATE_DEB,DATE_FIN))
+        print("\nDATE_DEB={} , DATE_FIN={}".format(0,dataframe_date.date.tail(1)))
+        print("\nDATE_DEB={} , DATE_FIN={}".format(0,dataframe_date.index[-1]))
+        #last_index=dataframe.index[-1]
+        LAST_INDEX=len(dataframe)-1
+        index_courant=0
+        val_idx_min=dataframe['EMA200'].idxmin()
+        val_idx_max=dataframe['EMA200'].idxmax()
+        print("\ndataframe idxmin_EMA200 : ",val_idx_min)
+        print("dataframe idxmax_EMA200 : ",val_idx_max)
+        # print("\ndataframe ILOC Min_EMA200 :\n",dataframe[['date','EMA200']].loc[val_idx_min])
+        # print("\ndataframe ILOC Max_EMA200 :\n",dataframe[['date','EMA200']].loc[val_idx_max])
+        print("\ndataframe ILOC Min_EMA200 :\n",dataframe[['EMA200']].loc[val_idx_min])
+        print("\ndataframe ILOC Max_EMA200 :\n",dataframe[['EMA200']].loc[val_idx_max])
+        print("\ndataframe ILOC Min_EMA200 :",dataframe[['EMA200']].loc[val_idx_min].values.astype(float)[0])
+        print("\ndataframe ILOC Max_EMA200 :",dataframe[['EMA200']].loc[val_idx_max].values.astype(float)[0])
+    
+        LISTE_INDEX=dataframe.tail(1).index.values.astype(int)[0]
+        print("LISTE_INDEX=",LISTE_INDEX)
+        print("LAST_INDEX=",dataframe_date.iloc[-1].date)
+    
+        if val_idx_min > 0 :
+            NBR=1
+        else:
+            NBR=0
+            
+       # # global DIFF_EMA200_EMA15_MOINS_1
+       # # DIFF_EMA200_EMA15_MOINS_1=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min-NBR]
+       #  global OPEN_MOINS_1
+       #  OPEN_MOINS_1=dataframe['OPEN'].loc[val_idx_min-NBR]
+       #  global CLOSE_MOINS_1
+       #  CLOSE_MOINS_1=dataframe['CLOSE'].loc[val_idx_min-NBR]
+       
+       #  global DIFF_EMA200_EMA1L_MOINS_1
+       #  DIFF_EMA200_EMA1L_MOINS_1=dataframe.DIFF_EMA200_EMA1L.loc[val_idx_min-NBR]
+       #  global DIFF_EMA200_EMA1H_MOINS_1
+       #  DIFF_EMA200_EMA1H_MOINS_1=dataframe.DIFF_EMA200_EMA1H.loc[val_idx_min-NBR]
+        
+       #  global DIFF_EMA200_EMA15
+       #  DIFF_EMA200_EMA15=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min]
+       #  global DIFF_EMA200_EMA15_MOINS_1
+       #  DIFF_EMA200_EMA15_MOINS_1=DIFF_EMA200_EMA15
+        
+       #  if val_idx_min > 0 :
+       #      DIFF_EMA200_EMA15_MOINS_1=dataframe.DIFF_EMA200_EMA15.loc[val_idx_min-1]
+        
+       #  global DIFF_EMA200_EMA1L
+       #  DIFF_EMA200_EMA1L=dataframe.DIFF_EMA200_EMA1L.loc[val_idx_min]
+       #  global DIFF_EMA200_EMA1H
+       #  DIFF_EMA200_EMA1H=dataframe.DIFF_EMA200_EMA1H.loc[val_idx_min] 
+        
+       #  global TRAME_EMA200_EMA15_MOINS_1
+       #  TRAME_EMA200_EMA15_MOINS_1=dataframe.loc[val_idx_min-NBR]
+       #  global TRAME_EMA200_EMA15
+       #  TRAME_EMA200_EMA15=dataframe.loc[val_idx_min]
+        
+        #DERTERMINATION DU POINT D ACHAT
+        global VARIATION_EMA200_EMA15
+        # VARIATION_EMA200_EMA15=DIFF_EMA200_EMA15-DIFF_EMA200_EMA15_MOINS_1
+    
+        global CUMUL_TAILLE_BG_ROUGE
+        global CUMUL_TAILLE_BG_VERTE
+        global custom_info
+        # print("TRAME_EMA200_EMA15_MOINS_1:",TRAME_EMA200_EMA15_MOINS_1)
+        # print("DIFF_EMA200_EMA15_MOINS_1:",DIFF_EMA200_EMA15_MOINS_1)
+        # print("TRAME_EMA200_EMA15:",TRAME_EMA200_EMA15)
+        # print("DIFF_EMA200_EMA15:",DIFF_EMA200_EMA15)
+        # print("\nVARIATION_EMA200_EMA15  :",VARIATION_EMA200_EMA15)
+        print("dataframe:;\n",dataframe.tail())
+    
+        #print("\ndataframe DESS CROSS LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15 ILOC idx_EMA200_EMA15  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15)
+        # print("\ndataframe DESS CROSS  LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15_N2 ILOC idx_EMA200_EMA15  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA15_N2)
+        # print("\ndataframe DESS CROSS DERNIERE VALEUR DE EMA15 POUR LE CROISEMENT ENTRE EMA1H ET EMA200  :\n",LAST_CROISEMENT_EMA200_DESS_CROSS_EMA1H)
+        
+        # SPEED=CALCULE_GRADIENT(dataframe,"EMA15")
+        # positions = np.flatnonzero(SPEED)
+        # print("positions:",positions)
+        # print("LEN positions:",len(positions))
+        # global SPEED_EMA15
+        # if len(positions) == 0 :
+        #     SPEED_EMA15=0
+        # else:
+        #     dataframe['SPEED_EMA15'] = SPEED
+        #     dataframe = dataframe.dropna()
+        #     dataframe['SPEED_EMA15']= dataframe['SPEED_EMA15'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
+        #     SPEED_EMA15=dataframe[['SPEED_EMA15']].loc[val_idx_min].values.astype(int)
+    
+        
+        # SPEED=CALCULE_GRADIENT(dataframe,"EMA1L")
+        # positions = np.flatnonzero(SPEED)
+        # print("positions:",positions)
+        # print("LEN positions:",len(positions))
+        # global SPEED_EMA1L
+        # if len(positions) == 0 :
+        #     SPEED_EMA1L=0
+        # else:
+        #     dataframe['SPEED_EMA1L'] = SPEED
+        #     dataframe = dataframe.dropna()
+        #     dataframe['SPEED_EMA1L']= dataframe['SPEED_EMA1L'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
+        #     SPEED_EMA1L=dataframe[['SPEED_EMA1L']].loc[val_idx_min].values.astype(int)
+            
+        # SPEED=CALCULE_GRADIENT(dataframe,"EMA1H")
+        # dataframe['SPEED_EMA1H'] = SPEED
+        # positions = np.flatnonzero(SPEED)
+        # print("positions:",positions)
+        # print("LEN positions:",len(positions))
+        # global SPEED_EMA1H
+        # if len(positions) == 0 :
+        #     SPEED_EMA1H=0
+        # else:
+        #     dataframe = dataframe.dropna()
+        #     dataframe['SPEED_EMA1H']= dataframe['SPEED_EMA1H'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
+        #     SPEED_EMA1H=dataframe[['SPEED_EMA1H']].loc[val_idx_min].values.astype(int)
+        
+        # SPEED=CALCULE_GRADIENT(dataframe,"EMA200")
+        # dataframe['SPEED_EMA200'] = SPEED
+        # positions = np.flatnonzero(SPEED)
+        # print("positions:",positions)
+        # print("LEN positions:",len(positions))
+        # global SPEED_EMA200
+        # if len(positions) == 0 :
+        #     SPEED_EMA200=0
+        # else:
+        #     dataframe = dataframe.dropna()
+        #     dataframe['SPEED_EMA200']= dataframe['SPEED_EMA200'].apply(lambda x : (np.round(x,decimals = 2))).astype(int)
+        #     SPEED_EMA200=dataframe[['SPEED_EMA200']].loc[val_idx_min].values.astype(int)
+        
+        global DIFF_EMA200_CLOSE
+        DIFF_EMA200_CLOSE=dataframe[['DIFF_EMA200_CLOSE']].loc[val_idx_min].values.astype(int)
+        
+        print("dataframe :\n",dataframe.tail())
+        print("SORTIE populate_indicators")
+        return dataframe
+        #exit()
+    # except Exception as g:
+    #     btc_df=RECUPERATION_DE_LA_DERNIERE_TRAME()
+    #     time.sleep(5)
+    #     populate_indicators(btc_df)  
+    # return dataframe
     
     ##print("LISTE_INDEX 1030=",dataframe.iloc[1030].date)
     #mask = (dataframe.iloc[1030].date >= dataframe.iloc[LAST_INDEX].date)
@@ -1133,26 +1137,31 @@ def nparray_tail(x: np.array, n:int):
         return x[-n:]  # Normal case: last N elements of array
 
 def populate_indicators_INIT() :
-    data = pd.DataFrame(klines)
-     # create colums name
-    data.columns = ['time','open', 'high', 'low', 'close', 'volume','close_time', 'qav','num_trades','taker_base_vol','taker_quote_vol', 'ignore']
-    print(data)
-    btc_df=data
-    #global dataframe
-    btc_df.time = btc_df.time.apply(lambda d: str(d)[0:10])
-    btc_df.time = btc_df.time.apply(lambda d: int(d))
-    print("btc_df.time=",btc_df.time)
-    btc_df['date'] = btc_df['time'].apply(lambda x: time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(x)))
-    print(btc_df)
-    btc_df['date']= pd.to_datetime(btc_df['date'])
-    print(btc_df.info())
-    print(btc_df['date'])
-    btc_df.date= btc_df.date.apply(lambda d: d + pd.Timedelta(hours=TIMEDELTA))
-    print("\nResult Lambda: \n",btc_df.time)
-    print(btc_df[['date','open','high','low','close','volume']])
-    dataframe=populate_indicators(btc_df)
-    # exit(0)
-    return dataframe
+    # try:
+        data = pd.DataFrame(klines)
+         # create colums name
+        data.columns = ['time','open', 'high', 'low', 'close', 'volume','close_time', 'qav','num_trades','taker_base_vol','taker_quote_vol', 'ignore']
+        print(data)
+        btc_df=data
+        #global dataframe
+        btc_df.time = btc_df.time.apply(lambda d: str(d)[0:10])
+        btc_df.time = btc_df.time.apply(lambda d: int(d))
+        print("btc_df.time=",btc_df.time)
+        btc_df['date'] = btc_df['time'].apply(lambda x: time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(x)))
+        print(btc_df)
+        btc_df['date']= pd.to_datetime(btc_df['date'])
+        print(btc_df.info())
+        print(btc_df['date'])
+        btc_df.date= btc_df.date.apply(lambda d: d + pd.Timedelta(hours=TIMEDELTA))
+        print("\nResult Lambda: \n",btc_df.time)
+        print(btc_df[['date','open','high','low','close','volume']])
+        dataframe=populate_indicators(btc_df)
+        return dataframe
+
+    # except Exception as h:
+    #     # populate_indicators_INIT()   
+    #     pass
+    # return dataframe
 
 
 def INIT(dataframe) :
@@ -3140,7 +3149,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
             ACHAT_SUR_SAR=False
             VENTE_SUR_SAR=True
 
-            
+        # RECUP_LAST_PRICE_IN_BINANCE(dataframe)
         print(DATE_HEURE)
         print("\nPOINT_ENTRE_EMA200 : ",POINT_ENTRE_EMA200)
         print("\nDERNIER_POINT_VENTE: ",DERNIER_POINT_VENTE)
@@ -3392,6 +3401,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                 LAST_PRICE_OLD=(float(last_price))
                 print("LAST_PRICE_OLD: ",LAST_PRICE_OLD)
                 # GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.85
+                # GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.9999
                 GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.9999
                 print("!!!!! GAIN_MOINS_UN_POURCENT: ",GAIN_MOINS_UN_POURCENT)
                 print("!!!!! MULTIP: ",MULTIP)
@@ -3481,7 +3491,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
             # if (LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0)  and (FRONT_MONTANT_EMA1H == 1) :
             # if (LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and TEST_K_AND_M_IN_VOLUME == True :
             if ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_VERTE") and (DIFF_SAR_SUP_PRIX == False)) \
-                or ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True) and (FRONT_MONTANT_EMA1H == 1)) : 
+                or ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True) and (FRONT_MONTANT_EMA1L == 1 or FRONT_MONTANT_EMA1H == 1)) : 
              # if (VAL_EMA15_COURANT <= VAL_OPEN) and float(VOLUME_COURANT) > 0 and (DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == False) \
              #        and (FRONT_MONTANT_EMA200 == 1) and (FRONT_MONTANT_COURT_EMA200 == 1) \
              #            or ((TYPE_BG_BIS == "BG_VERTE") and (int(TAILLE_BG_BIS) > 0)) :
@@ -3582,10 +3592,11 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
 
             
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (FRONT_MONTANT_EMA1H >= 0) and (FRONT_MONTANT_COURT_EMA15 == 0) :
-            if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1)   :
-               if (GAIN1 > 0 and  DIFF_GAIN1_INF_GAIN_OLD == True and TYPE_BG_BIS == "BG_VERTE" ) \
+            if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and GAIN1 > 0 \
+                or ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (GAIN_MOINS_UN_POURCENT > last_price ) ) :
+               if (GAIN1 > 0 and  DIFF_GAIN1_INF_GAIN_OLD == True and TYPE_BG_BIS == "BG_VERTE" ) and (FRONT_MONTANT_EMA1H == 1) \
                 or ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (TYPE_BG_BIS == "BG_ROUGE" )  ) \
-                    or ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (TEST_VARIATION_POSITIVE == False) ) :
+                or ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (TEST_VARIATION_POSITIVE == False) ) :
                     # or (((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (TEST_VARIATION_POSITIVE == True) and DIFF_SAR_SUP_EMA15 == True)) :
                  # if (  float(GAIN1) > 0 and (VAL_EMA15_COURANT < VAL_OPEN) ) or float(GAIN1) >= 5 or (GAIN_MOINS_UN_POURCENT > last_price) or (TYPE_BG == "BG_ROUGE") or  GAIN1 < 0 :
                  # if (  float(GAIN1) > 0 and (VAL_EMA15_COURANT < VAL_OPEN) ) or float(GAIN1) >= 5 or (GAIN_MOINS_UN_POURCENT > last_price) or (TYPE_BG_BIS == "BG_ROUGE") or  GAIN1 < 0 :
@@ -3593,10 +3604,12 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                  # if  (  float(GAIN1) > 0 and (VAL_EMA15_COURANT < VAL_OPEN) ) or float(GAIN1) >= 5 or (GAIN_MOINS_UN_POURCENT > last_price) or ((TYPE_BG_BIS == "BG_ROUGE" ) and (DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True)) \
                  # if  (  float(GAIN1) > 0 and (VAL_EMA15_COURANT < VAL_OPEN) ) or float(GAIN1) >= 5 or ((TYPE_BG_BIS == "BG_ROUGE" ) and (DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True)) \
                  #   or ((TYPE_BG_BIS == "BG_ROUGE" ) and (FRONT_MONTANT_EMA1H == 1)) or ((TYPE_BG_BIS == "BG_ROUGE" )) or (TEST_VARIATION_POSITIVE == False) or (FRONT_MONTANT_EMA1L == 0) \
-                 #       or ( VENTE_SUR_SAR == True) or (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) : or  (TYPE_BG_BIS == "BG_ROUGE" and GAIN1 < 0 )
+                 #       or ( VENTE_SUR_SAR == True) or (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) : or (GAIN_MOINS_UN_POURCENT > last_price and DIFF_SAR_SUP_PRIX == True)
                  if (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) or float(GAIN1) >= 15 or  (DIFF_SAR_SUP_PRIX == True and TEST_VARIATION_POSITIVE == True and GAIN1 > 0) \
-                    or  (TYPE_BG_BIS == "BG_ROUGE" and TEST_VARIATION_POSITIVE == True and GAIN1 >= 0)  \
-                        or ( GAIN1 < -1 and DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True and TYPE_BG_BIS == "BG_ROUGE" ) \
+                   or  (TYPE_BG_BIS == "BG_ROUGE" and TEST_VARIATION_POSITIVE == True and GAIN1 >= 0) \
+                   or (GAIN_MOINS_UN_POURCENT > last_price ) \
+                   or  (TYPE_BG_BIS == "BG_VERTE" and GAIN1 < 0 and DIFF_SAR_SUP_PRIX == True) or  (TYPE_BG_BIS == "BG_ROUGE" and GAIN1 >= 0 ) \
+                   or ( GAIN1 > 0 and DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True and TYPE_BG_BIS == "BG_ROUGE" ) \
                    or ( DIFF_GAIN1_INF_GAIN_OLD == True  and GAIN1 > 0 and (TYPE_BG_BIS == "BG_VERTE" ) ) :    
                     print ("ENTRER DANS VENTE FINALE")
                     # GAIN1 = GAIN_OLD     
@@ -3615,7 +3628,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
 
             
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and float(GAIN1) > 0 and (DIFF_SAR_SUP_PRIX == True) : 
-            if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and GAIN1 >= 0 :
+            if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and GAIN1 > 0 :
                 # if ( int(COMPTEUR_DIFF_GAIN1_EGAL) >= int(NBR_COMPTEUR_DIFF_GAIN1) ) and ( FRONT_MONTANT_EMA1H == 1) and GAIN1 >= 0 :
                 if ( int(COMPTEUR_DIFF_GAIN1_EGAL) >= int(NBR_COMPTEUR_DIFF_GAIN1) ) : #and GAIN1 >= 0 :
                   # if (  float(GAIN1) > 0 and (TYPE_BG_BIS == "BG_VERTE")) \
@@ -3639,7 +3652,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                     if  (TYPE_BG_BIS == "BG_ROUGE") and float(GAIN1) <= 0 or (last_index - INDEXMAX == 0  and VENTE_SUR_SAR==True and int(GAIN1) <= 0) :
                         Delay_new_frame(60)
                     else :
-                        Delay_new_frame(90)
+                        Delay_new_frame(45)
 
                     
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1)  and ((TYPE_BG_BIS == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True )) and float(GAIN1) >= 0 : 
@@ -7899,24 +7912,27 @@ dataframe=populate_indicators_INIT()
 
 
 while True :
-    INIT(dataframe)
-    MAIN(dataframe)
-    global LISTE_ACHAT_VENTE
-    LEN_LISTE_ACHAT_VENTE=len(LISTE_ACHAT_VENTE)
-    print("LEN_LISTE_ACHAT_VENTE=",LEN_LISTE_ACHAT_VENTE)
-    if ( LEN_LISTE_ACHAT_VENTE != 0)  :
-        LAST_LISTE_ACHAT_VENTE=LISTE_ACHAT_VENTE.CUMUL.iloc[-1]
- 
-    if FLAG_BEST_NBR_TAILLE_BG == 0 :
-       CALCULE_BEST_BG()    
-    """
-    if (FLAG_BEST_NBR_TAILLE_BG == 0) :
-      if (LAST_LISTE_ACHAT_VENTE != "") and ( LEN_LISTE_ACHAT_VENTE != 0)  :
-         CALCULE_BEST_BG()
-      
-      else:
-          NBR_TAILLE_BG=6
-          FLAG_BEST_NBR_TAILLE_BG=1
-          print("MODE MINUTE")
-          #ON QUITTE LA COURBE
-      """
+    # try:
+        INIT(dataframe)
+        MAIN(dataframe)
+        global LISTE_ACHAT_VENTE
+        LEN_LISTE_ACHAT_VENTE=len(LISTE_ACHAT_VENTE)
+        print("LEN_LISTE_ACHAT_VENTE=",LEN_LISTE_ACHAT_VENTE)
+        if ( LEN_LISTE_ACHAT_VENTE != 0)  :
+            LAST_LISTE_ACHAT_VENTE=LISTE_ACHAT_VENTE.CUMUL.iloc[-1]
+     
+        if FLAG_BEST_NBR_TAILLE_BG == 0 :
+           CALCULE_BEST_BG()    
+        """
+        if (FLAG_BEST_NBR_TAILLE_BG == 0) :
+          if (LAST_LISTE_ACHAT_VENTE != "") and ( LEN_LISTE_ACHAT_VENTE != 0)  :
+             CALCULE_BEST_BG()
+          
+          else:
+              NBR_TAILLE_BG=6
+              FLAG_BEST_NBR_TAILLE_BG=1
+              print("MODE MINUTE")
+              #ON QUITTE LA COURBE
+          """
+    # except Exception as i:
+    #     time.sleep(5)
