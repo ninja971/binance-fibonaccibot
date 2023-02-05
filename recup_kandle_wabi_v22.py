@@ -3490,7 +3490,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
             # if (LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (FRONT_MONTANT_EMA15 == 1) and (FRONT_MONTANT_COURT_EMA15 == 1) and (FRONT_MONTANT_EMA1H == 1) :
             # if (LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0)  and (FRONT_MONTANT_EMA1H == 1) :
             # if (LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and TEST_K_AND_M_IN_VOLUME == True :
-            if ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_VERTE") and (DIFF_SAR_SUP_PRIX == False)) \
+            if ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_VERTE") and (DIFF_SAR_SUP_PRIX == False) and (FRONT_MONTANT_EMA1H == 1)) \
                 or ((LAST_ORDER != "BUY") and  (POINT_ENTRE_EMA200 == 0) and (TYPE_BG_BIS == "BG_VERTE")  and (TYPE_BG == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True) and (FRONT_MONTANT_EMA1H == 1)) : 
              # if (VAL_EMA15_COURANT <= VAL_OPEN) and float(VOLUME_COURANT) > 0 and (DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == False) \
              #        and (FRONT_MONTANT_EMA200 == 1) and (FRONT_MONTANT_COURT_EMA200 == 1) \
@@ -3604,7 +3604,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                  # if  (  float(GAIN1) > 0 and (VAL_EMA15_COURANT < VAL_OPEN) ) or float(GAIN1) >= 5 or ((TYPE_BG_BIS == "BG_ROUGE" ) and (DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True)) \
                  #   or ((TYPE_BG_BIS == "BG_ROUGE" ) and (FRONT_MONTANT_EMA1H == 1)) or ((TYPE_BG_BIS == "BG_ROUGE" )) or (TEST_VARIATION_POSITIVE == False) or (FRONT_MONTANT_EMA1L == 0) \
                  #       or ( VENTE_SUR_SAR == True) or (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) : or (GAIN_MOINS_UN_POURCENT > last_price and DIFF_SAR_SUP_PRIX == True)
-                 if (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) or float(GAIN1) >= 15 or  (DIFF_SAR_SUP_PRIX == True and TEST_VARIATION_POSITIVE == True and GAIN1 > 0) \
+                 if (DIFF_SAR_SUP_PRIX == True and GAIN1 > 0 ) or float(GAIN1) >= 5 or  (DIFF_SAR_SUP_PRIX == True and TEST_VARIATION_POSITIVE == True and GAIN1 > 0) \
                    or  (TYPE_BG_BIS == "BG_ROUGE" and TEST_VARIATION_POSITIVE == True and GAIN1 >= 0) \
                    or  (TYPE_BG_BIS == "BG_VERTE" and GAIN1 >= 0 and DIFF_SAR_SUP_PRIX == True) or  (TYPE_BG_BIS == "BG_ROUGE" and GAIN1 >= 0 ) \
                    or ( GAIN1 > 0 and DIFF_VAL_CLOSE_INF_VAL_CLOSE_N2 == True and TYPE_BG_BIS == "BG_ROUGE" ) \
@@ -3624,20 +3624,6 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                     #    Delay_new_frame(180)
                     
 
-            if ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (GAIN_MOINS_UN_POURCENT > last_price ) \
-                and (DIFF_SAR_SUP_PRIX == True) and (TYPE_BG_BIS == "BG_ROUGE")) :
-                    print ("ENTRER DANS VENTE FIN CYCLE")
-                    # GAIN1 = GAIN_OLD     
-                    custom_info["couleur"]="VENTE FIN CYCLE : " + str(GAIN1)
-                    # RECUP_LAST_PRICE_IN_BINANCE(dataframe)
-                    BOOLLEEN_NINJA(TAILLE_BG,dataframe,"VENTE") 
-                    # LAST_ORDER = "SELL"
-                    CYCLE_COURT=False 
-                    if  (DIFF_SAR_SUP_PRIX == True ) and (TEST_VARIATION_POSITIVE == True) :
-                    #       Delay_new_frame(120)
-                    # else:
-                            Delay_new_frame("")
-                            
                             
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and float(GAIN1) > 0 and (DIFF_SAR_SUP_PRIX == True) : 
             if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and GAIN1 > 0 :
@@ -3661,10 +3647,25 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                         # Delay_new_frame(30)
                     # COMPTEUR_GAIN_ZERO=0
                     # return
-                    if  (TYPE_BG_BIS == "BG_ROUGE") and float(GAIN1) <= 0 or (last_index - INDEXMAX == 0  and VENTE_SUR_SAR==True and int(GAIN1) <= 0) :
-                        Delay_new_frame(60)
-                    else :
-                        Delay_new_frame(45)
+                    if  (TYPE_BG_BIS == "BG_ROUGE") and float(GAIN1) <= 0 or (last_index - INDEXMAX == 0  and VENTE_SUR_SAR==True and float(GAIN1) <= 0) :
+                    #     Delay_new_frame(60)
+                    # else :
+                        Delay_new_frame(20)
+                        
+                        
+            if ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (GAIN_MOINS_UN_POURCENT > last_price ) and (TEST_VARIATION_POSITIVE == True) \
+                 and (float(GAIN1) <= 0) and (TYPE_BG_BIS == "BG_ROUGE")) :
+                    print ("ENTRER DANS VENTE FIN CYCLE")
+                    # GAIN1 = GAIN_OLD     
+                    custom_info["couleur"]="VENTE FIN CYCLE : " + str(GAIN1)
+                    # RECUP_LAST_PRICE_IN_BINANCE(dataframe)
+                    BOOLLEEN_NINJA(TAILLE_BG,dataframe,"VENTE") 
+                    # LAST_ORDER = "SELL"
+                    CYCLE_COURT=False 
+                    if  (DIFF_SAR_SUP_PRIX == True ) and (TEST_VARIATION_POSITIVE == True) :
+                    #       Delay_new_frame(120)
+                    # else:
+                            Delay_new_frame(60)                        
 
                     
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1)  and ((TYPE_BG_BIS == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True )) and float(GAIN1) >= 0 : 
@@ -7340,10 +7341,13 @@ def EXEC_ORDER (dataframe):
               #or  (custom_info["SCENARIO"]=="VENTE DYNAMIQUE BOUGIE VERTE DECROISSANTE" ):
                 # LAST_ORDER="SELL"
                 # custom_info["LAST_ORDER"]=LAST_ORDER
-                
-                CALL_TELEGRAMME()
+                custom_info["MODE_GAIN"]="GAIN_RELATIF"
                 LAST_ORDER="BUY"
                 custom_info["LAST_ORDER"]=LAST_ORDER
+                CALL_TELEGRAMME()
+                if custom_info["ETAPE"] == "VIDE" :
+                   CALL_TELEGRAMME()
+
                 print("DANS EXEC ORDER VENTE LAST_ORDER=",LAST_ORDER) 
                 ORDER="" 
                 #POINT_ENTRE_EMA200=0
@@ -7925,7 +7929,7 @@ dataframe=populate_indicators_INIT()
 
 
 while True :
-    # try:
+    try:
         INIT(dataframe)
         MAIN(dataframe)
         global LISTE_ACHAT_VENTE
@@ -7947,5 +7951,6 @@ while True :
               print("MODE MINUTE")
               #ON QUITTE LA COURBE
           """
-    # except Exception as i:
+    except Exception as i:
+        pass
     #     time.sleep(5)
