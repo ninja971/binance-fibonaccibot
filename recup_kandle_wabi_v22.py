@@ -3402,7 +3402,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                 print("LAST_PRICE_OLD: ",LAST_PRICE_OLD)
                 # GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.85
                 # GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.9999
-                GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.9999
+                GAIN_MOINS_UN_POURCENT=(VAL_ACHAT) * 0.99999
                 print("!!!!! GAIN_MOINS_UN_POURCENT: ",GAIN_MOINS_UN_POURCENT)
                 print("!!!!! MULTIP: ",MULTIP)
                 LEN_VAL_ACHAT=len(str(VAL_ACHAT))
@@ -3536,7 +3536,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                 BOOLLEEN_NINJA(TAILLE_BG,dataframe,"ACHAT") 
                 # Delay_new_frame(30)
                 print("!!!!!! CLOTURE ACHAT SHORT  ET DEBUT ACHAT LONGUE : ",last_price)
-                LAST_ORDER = "BUY"
+                # LAST_ORDER = "BUY"
                 return
             
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and float(GAIN1) >= float(GAIN_OLD) and float(GAIN_OLD) > 0 \
@@ -3660,8 +3660,7 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                     custom_info["couleur"]="VENTE FIN CYCLE : " + str(GAIN1)
                     # RECUP_LAST_PRICE_IN_BINANCE(dataframe)
                     BOOLLEEN_NINJA(TAILLE_BG,dataframe,"VENTE") 
-                    # LAST_ORDER = "SELL"
-                    CYCLE_COURT=False 
+                    LAST_ORDER = "SELL"
                     if  (DIFF_SAR_SUP_PRIX == True ) and (TEST_VARIATION_POSITIVE == True) :
                     #       Delay_new_frame(120)
                     # else:
@@ -7341,12 +7340,12 @@ def EXEC_ORDER (dataframe):
               #or  (custom_info["SCENARIO"]=="VENTE DYNAMIQUE BOUGIE VERTE DECROISSANTE" ):
                 # LAST_ORDER="SELL"
                 # custom_info["LAST_ORDER"]=LAST_ORDER
-                custom_info["MODE_GAIN"]="GAIN_RELATIF"
-                LAST_ORDER="BUY"
-                custom_info["LAST_ORDER"]=LAST_ORDER
+                # custom_info["MODE_GAIN"]="GAIN_RELATIF"
+                # LAST_ORDER="BUY"
+                # custom_info["LAST_ORDER"]=LAST_ORDER
                 CALL_TELEGRAMME()
-                if custom_info["ETAPE"] == "VIDE" :
-                   CALL_TELEGRAMME()
+                # if custom_info["ETAPE"] == "VIDE" :
+                #    CALL_TELEGRAMME()
 
                 print("DANS EXEC ORDER VENTE LAST_ORDER=",LAST_ORDER) 
                 ORDER="" 
