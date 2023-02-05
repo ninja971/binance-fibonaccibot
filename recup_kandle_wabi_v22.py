@@ -3647,24 +3647,28 @@ def ULTIMATE_NINJA_NEW(dataframe,val_mask_idxmin) :
                         # Delay_new_frame(30)
                     # COMPTEUR_GAIN_ZERO=0
                     # return
-                    if  (TYPE_BG_BIS == "BG_ROUGE") and float(GAIN1) <= 0 or (last_index - INDEXMAX == 0  and VENTE_SUR_SAR==True and float(GAIN1) <= 0) :
-                    #     Delay_new_frame(60)
-                    # else :
-                        Delay_new_frame(20)
+                    # if  (TYPE_BG_BIS == "BG_ROUGE") and float(GAIN1) <= 0 or (last_index - INDEXMAX == 0  and VENTE_SUR_SAR==True and float(GAIN1) <= 0) :
+                    # #     Delay_new_frame(60)
+                    # # else :
+                    #     Delay_new_frame(20)
+                    Delay_new_frame(5)
+
                         
                         
-            if ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (GAIN_MOINS_UN_POURCENT > last_price ) and (TEST_VARIATION_POSITIVE == True) \
-                 and (float(GAIN1) <= 0) and (TYPE_BG_BIS == "BG_ROUGE")) :
+            # if ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (GAIN_MOINS_UN_POURCENT > last_price ) and (TEST_VARIATION_POSITIVE == True) \
+            #      and (float(GAIN1) <= 0) and (TYPE_BG_BIS == "BG_ROUGE") and ( FRONT_MONTANT_EMA1H == 0) and (DIFF_SAR_SUP_PRIX == True )) \
+            if ((LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1) and (TEST_VARIATION_POSITIVE == True) \
+                     and (float(GAIN1) >= 0) and (TYPE_BG_BIS == "BG_ROUGE") and ( FRONT_MONTANT_EMA1H == 0) and (DIFF_SAR_SUP_PRIX == True )) :
                     print ("ENTRER DANS VENTE FIN CYCLE")
                     # GAIN1 = GAIN_OLD     
                     custom_info["couleur"]="VENTE FIN CYCLE : " + str(GAIN1)
                     # RECUP_LAST_PRICE_IN_BINANCE(dataframe)
                     BOOLLEEN_NINJA(TAILLE_BG,dataframe,"VENTE") 
                     LAST_ORDER = "SELL"
-                    if  (DIFF_SAR_SUP_PRIX == True ) and (TEST_VARIATION_POSITIVE == True) :
-                    #       Delay_new_frame(120)
+                    # if  (DIFF_SAR_SUP_PRIX == True ) and (TEST_VARIATION_POSITIVE == True) :
+                    # #       Delay_new_frame(120)
                     # else:
-                            Delay_new_frame(60)                        
+                    Delay_new_frame(60)                        
 
                     
             # if (LAST_ORDER != "SELL")   and  (POINT_ENTRE_EMA200 == 1)  and ((TYPE_BG_BIS == "BG_ROUGE") and (DIFF_SAR_SUP_PRIX == True )) and float(GAIN1) >= 0 : 
